@@ -1,4 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, ContentType } from "@prisma/client";
+import fs from 'fs'
 
 const prisma = new PrismaClient();
 
@@ -20,12 +21,58 @@ async function modifyAboutPages(title: string, body: string) {
 
 }
 
-async function getAboutPages() {
-    return await prisma.content.findUnique({
+
+async function modifyGalleryPages(title: string, images: Express.Multer.File[]) {
+
+    const imagesURL = images.map(i => i.path);
+    const currentImages = (await prisma.content.findUnique({
         where: {
-            type: "ABOUT"
+            type: "GALLERY"
+        }
+    }))?.images
+    return await prisma.content.upsert({
+        create: {
+            title,
+            type: "GALLERY",
+            images: imagesURL
+        },
+        update: {
+            title,
+            images: [...currentImages!, ...imagesURL],
+        },
+        where: {
+            type: "GALLERY"
+        }
+    })
+
+}
+
+async function deleteImageGallery(imageURL: string) {
+    const currentImages = (await prisma.content.findUnique({
+        where: {
+            type: "GALLERY"
+        }
+    }))?.images
+
+    const newImageList = currentImages?.filter(i => i !== imageURL);
+
+    fs.unlinkSync(imageURL)
+
+    return await prisma.content.update({
+        data: {
+            images: newImageList
+        },
+        where: {
+            type: "GALLERY"
         }
     })
 }
 
-export default { modifyAboutPages, getAboutPages }
+async function getContentPages(contentType: ContentType) {
+    return await prisma.content.findUnique({
+        where: {
+            type: contentType
+        }
+    });
+}
+export default { modifyAboutPages, modifyGalleryPages, getContentPages, deleteImageGallery }

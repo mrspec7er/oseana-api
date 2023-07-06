@@ -20,14 +20,16 @@ model User {
 }
 
 model Content {
-  id    Int         @id @default(autoincrement())
-  title String
-  body  String
-  type  ContentType @unique
+  id     Int         @id @default(autoincrement())
+  title  String
+  body   String?
+  images String[]
+  type   ContentType @unique
 }
 
 enum ContentType {
   ABOUT
+  GALLERY
 }
 
 enum Role {
