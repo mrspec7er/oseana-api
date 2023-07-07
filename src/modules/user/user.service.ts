@@ -12,6 +12,7 @@ export interface UserType {
   id?: number;
   name: string;
   email: string;
+  phone: string;
   password: string;
   role?: RoleType;
 }
@@ -54,13 +55,14 @@ async function createToken(email: string, type: "ACCESS" | "REFRESH" | "VERIFIED
 
 const prisma = new PrismaClient();
 
-async function createUser({ email, name, password }: UserType) {
+async function createUser({ email, name, password, phone }: UserType) {
 
   const encryptedPassword = await bcrypt.hash(password, 11);
   const user = await prisma.user.create({
     data: {
       name,
       email,
+      phone,
       password: encryptedPassword,
       role: "USER",
       verifiedEmail: false

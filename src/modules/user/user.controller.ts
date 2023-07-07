@@ -14,7 +14,7 @@ async function createUser(
   req: Request,
   res: Response
 ) {
-  const { name, email, password } = req.body;
+  const { name, email, password, phone } = req.body;
 
   try {
 
@@ -23,7 +23,7 @@ async function createUser(
     }
 
 
-    const user = await userServices.createUser({ email, name, password })
+    const user = await userServices.createUser({ email, name, password, phone })
 
     return mutationSuccessResponse(res, user);
   } catch (err: any) {
