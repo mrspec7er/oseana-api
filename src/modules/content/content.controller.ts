@@ -31,7 +31,10 @@ async function modifyGalleryPages(
 
     try {
 
-        if (!title || !images?.length) {
+        console.log(title, images);
+        
+
+        if (!title || !images) {
             return badRequestResponse(res, "Title and images undefine!")
         }
 

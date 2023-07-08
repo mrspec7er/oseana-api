@@ -30,6 +30,7 @@ async function modifyGalleryPages(title: string, images: Express.Multer.File[]) 
             type: "GALLERY"
         }
     }))?.images
+    
     return await prisma.content.upsert({
         create: {
             title,
@@ -38,7 +39,7 @@ async function modifyGalleryPages(title: string, images: Express.Multer.File[]) 
         },
         update: {
             title,
-            images: [...currentImages!, ...imagesURL],
+            images: currentImages ? [...currentImages!, ...imagesURL] : imagesURL,
         },
         where: {
             type: "GALLERY"

@@ -24,7 +24,7 @@ export async function verifyUserAdmin(
         const payload = decode(accessToken);
 
         if (payload.exp < new Date().getTime() / 1000) {
-            loginRedirectResponse(res);
+            return loginRedirectResponse(res);
         }
 
         if (!payload.email) {
