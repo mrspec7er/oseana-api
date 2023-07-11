@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(express.urlencoded({ extended: true }));
-app.use('/media', express.static('media'));
+app.use("/media", express.static("media"));
 
 routes(app);
 

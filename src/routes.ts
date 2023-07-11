@@ -1,13 +1,15 @@
-import { Express } from 'express'
+import { Express } from "express";
 
-import userRoute from './modules/user/user.route'
-import contentRoute from './modules/content/content.route'
-import ticketRoute from './modules/ticket/ticket.route'
+import user from "./modules/user/user.route";
+import content from "./modules/content/content.route";
+import ticket from "./modules/ticket/ticket.route";
+import cart from "./modules/cart/cart.route";
 
 function routes(app: Express) {
-    app.use("/api/v1", userRoute);
-    app.use("/api/v1", contentRoute);
-    app.use("/api/v1", ticketRoute)
+  app.use("/api/v1", user);
+  app.use("/api/v1", content);
+  app.use("/api/v1", ticket);
+  app.use("/api/v1", cart);
 }
 
-export default routes
+export default routes;

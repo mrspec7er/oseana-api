@@ -1,7 +1,10 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt'
-import { createDecoder, createSigner } from 'fast-jwt';
-import { resetPasswordEmailTemplate, sendEmail } from '../../utility/emailService';
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
+import { createDecoder, createSigner } from "fast-jwt";
+import {
+  resetPasswordEmailTemplate,
+  sendEmail,
+} from "../../utility/emailService";
 
 export enum RoleType {
   ADMIN = "ADMIN",
@@ -38,9 +41,11 @@ const verifiedEmailSignature = createSigner({
 
 const decode = createDecoder();
 
-async function createToken(email: string, type: "ACCESS" | "REFRESH" | "VERIFIED") {
+async function createToken(
+  email: string,
+  type: "ACCESS" | "REFRESH" | "VERIFIED"
+) {
   if (type === "ACCESS") {
-
     return accessTokensignature({ email });
   }
 
@@ -56,7 +61,6 @@ async function createToken(email: string, type: "ACCESS" | "REFRESH" | "VERIFIED
 const prisma = new PrismaClient();
 
 async function createUser({ email, name, password, phone }: UserType) {
-
   const encryptedPassword = await bcrypt.hash(password, 11);
   const user = await prisma.user.create({
     data: {
@@ -65,22 +69,20 @@ async function createUser({ email, name, password, phone }: UserType) {
       phone,
       password: encryptedPassword,
       role: "USER",
-      verifiedEmail: false
+      verifiedEmail: false,
     },
   });
 
   //send email to user
 
-  return await createToken(user.email, "VERIFIED")
-
+  return await createToken(user.email, "VERIFIED");
 }
 
 async function verifiedEmail(token: string) {
-
   const payload = decode(token);
 
   if (payload.exp < new Date().getTime() / 1000) {
-    return { message: "Token expired!" }
+    return { message: "Token expired!" };
   }
   if (!payload.email) {
     return { message: "Failed to decode refresh token!" };
@@ -96,14 +98,12 @@ async function verifiedEmail(token: string) {
     return { message: "Cannot find user account!" };
   }
 
-  user.password = 'encrypted'
+  user.password = "encrypted";
 
-  return { ...user }
-
+  return { ...user };
 }
 
 async function login(email: string, password: string) {
-
   const userData = await prisma.user.findUnique({
     where: {
       email,
@@ -123,16 +123,15 @@ async function login(email: string, password: string) {
   return {
     accessToken: await createToken(userData.email, "ACCESS"),
     refreshToken: await createToken(userData.email, "REFRESH"),
-    userData
-  }
+    userData,
+  };
 }
 
 async function getAccessToken(refreshToken: string) {
-
   const payload = decode(refreshToken);
 
   if (payload.exp < new Date().getTime() / 1000) {
-    return { message: "Token expired!" }
+    return { message: "Token expired!" };
   }
   if (!payload.email) {
     return { message: "Failed to decode refresh token!" };
@@ -155,14 +154,14 @@ async function getAllUsers(page: number, limit: number, keyword: string) {
     where: {
       name: {
         contains: keyword,
-        mode: 'insensitive'
+        mode: "insensitive",
       },
     },
     skip: (page - 1) * limit,
     take: limit,
   });
 
-  users.map(i => i.password = 'encrypted')
+  users.map((i) => (i.password = "encrypted"));
   const totalData = await prisma.user.count({
     where: {
       name: {
@@ -172,8 +171,7 @@ async function getAllUsers(page: number, limit: number, keyword: string) {
     },
   });
 
-
-  return { users, meta: { totalData } }
+  return { users, meta: { totalData } };
 }
 
 async function sendResetPasswordLink(email: string) {
@@ -184,13 +182,12 @@ async function sendResetPasswordLink(email: string) {
   });
 
   if (!user) {
-    return { message: "Cannot find user with email: " + email }
+    return { message: "Cannot find user with email: " + email };
   }
 
   const accessToken = await createToken(user.email, "REFRESH");
 
-  const resetPasswordURL =
-    FRONTEND_BASE_URL + "/reset-password/" + accessToken;
+  const resetPasswordURL = FRONTEND_BASE_URL + "/reset-password/" + accessToken;
 
   const emailBody = resetPasswordEmailTemplate("Oseana", resetPasswordURL);
 
@@ -207,15 +204,14 @@ async function sendResetPasswordLink(email: string) {
 }
 
 async function resetPassword(newPassword: string, resetToken: string) {
-
   const payload = decode(resetToken);
 
   if (payload.exp < new Date().getTime() / 1000) {
-    return { message: "Expired reset token" }
+    return { message: "Expired reset token" };
   }
 
   if (!payload.email) {
-    return { message: "Cannot find user credentials" }
+    return { message: "Cannot find user credentials" };
   }
   const userData = await prisma.user.findUnique({
     where: {
@@ -224,7 +220,7 @@ async function resetPassword(newPassword: string, resetToken: string) {
   });
 
   if (!userData) {
-    return { message: "Cannot find user credentials" }
+    return { message: "Cannot find user credentials" };
   }
 
   const encryptedPassword = await bcrypt.hash(newPassword, 11);
@@ -237,9 +233,17 @@ async function resetPassword(newPassword: string, resetToken: string) {
     },
   });
 
-  user.password = 'encrypted'
+  user.password = "encrypted";
 
-  return { ...user }
+  return { ...user };
 }
 
-export default { createUser, login, getAccessToken, getAllUsers, verifiedEmail, sendResetPasswordLink, resetPassword }
+export default {
+  createUser,
+  login,
+  getAccessToken,
+  getAllUsers,
+  verifiedEmail,
+  sendResetPasswordLink,
+  resetPassword,
+};

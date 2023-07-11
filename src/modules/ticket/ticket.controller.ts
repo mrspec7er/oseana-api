@@ -1,92 +1,84 @@
 import { Request, Response } from "express";
-import { badRequestResponse, errorResponse, mutationSuccessResponse } from "../../utility/apiResponse";
-import ticketService from './ticket.service'
+import {
+  badRequestResponse,
+  errorResponse,
+  mutationSuccessResponse,
+} from "../../utility/apiResponse";
+import ticketService from "./ticket.service";
 
-async function create(
-    req: Request,
-    res: Response
-) {
-    const { name, destination, price, description, destinationURL, include } = req.body;
+async function create(req: Request, res: Response) {
+  const { name, destination, price, description, destinationURL, include } =
+    req.body;
 
-    try {
-        if (!name || !description || !price) {
-            return badRequestResponse(res, "Required field undefine!")
-        }
-
-        const ticket = await ticketService.create({
-            name,
-            destination,
-            price,
-            description,
-            destinationURL,
-            include
-        })
-
-        return mutationSuccessResponse(res, ticket);
-    } catch (err: any) {
-        return errorResponse(res, err.message);
+  try {
+    if (!name || !description || !price) {
+      return badRequestResponse(res, "Required field undefine!");
     }
+
+    const ticket = await ticketService.create({
+      name,
+      destination,
+      price,
+      description,
+      destinationURL,
+      include,
+    });
+
+    return mutationSuccessResponse(res, ticket);
+  } catch (err: any) {
+    return errorResponse(res, err.message);
+  }
 }
 
-async function update(
-    req: Request,
-    res: Response
-) {
-    const { id, name, destination, price, description, destinationURL, include } = req.body;
+async function update(req: Request, res: Response) {
+  const { id, name, destination, price, description, destinationURL, include } =
+    req.body;
 
-    try {
-        if (!id || !name || !description || !price) {
-            return badRequestResponse(res, "Required field undefine!")
-        }
-
-        const ticket = await ticketService.update({
-            id,
-            name,
-            destination,
-            price,
-            description,
-            destinationURL,
-            include
-        })
-
-        return mutationSuccessResponse(res, ticket);
-    } catch (err: any) {
-        return errorResponse(res, err.message);
+  try {
+    if (!id || !name || !description || !price) {
+      return badRequestResponse(res, "Required field undefine!");
     }
+
+    const ticket = await ticketService.update({
+      id,
+      name,
+      destination,
+      price,
+      description,
+      destinationURL,
+      include,
+    });
+
+    return mutationSuccessResponse(res, ticket);
+  } catch (err: any) {
+    return errorResponse(res, err.message);
+  }
 }
 
-async function deleteOne(
-    req: Request,
-    res: Response
-) {
-    const { id } = req.params;
+async function deleteOne(req: Request, res: Response) {
+  const { id } = req.params;
 
-    try {
-        if (!id) {
-            return badRequestResponse(res, "Required field undefine!")
-        }
-
-        const ticket = await ticketService.deleteOne(Number(id))
-
-        return mutationSuccessResponse(res, ticket);
-    } catch (err: any) {
-        return errorResponse(res, err.message);
+  try {
+    if (!id) {
+      return badRequestResponse(res, "Required field undefine!");
     }
+
+    const ticket = await ticketService.deleteOne(Number(id));
+
+    return mutationSuccessResponse(res, ticket);
+  } catch (err: any) {
+    return errorResponse(res, err.message);
+  }
 }
 
-async function getAll(
-    req: Request,
-    res: Response
-) {
+async function getAll(req: Request, res: Response) {
+  try {
+    const ticket = await ticketService.getAll();
 
-    try {
-
-        const ticket = await ticketService.getAll()
-
-        return mutationSuccessResponse(res, ticket);
-    } catch (err: any) {
-        return errorResponse(res, err.message);
-    }
+    return mutationSuccessResponse(res, ticket);
+  } catch (err: any) {
+    return errorResponse(res, err.message);
+  }
 }
 
-export default {create, deleteOne, update, getAll}
+export default { create, deleteOne, update, getAll };

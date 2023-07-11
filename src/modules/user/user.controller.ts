@@ -8,33 +8,28 @@ import {
 import { Request, Response } from "express";
 import userServices from "./user.service";
 
-
-
-async function createUser(
-  req: Request,
-  res: Response
-) {
+async function createUser(req: Request, res: Response) {
   const { name, email, password, phone } = req.body;
 
   try {
-
     if (!email || !password) {
       return badRequestResponse(res, "Email and password required");
     }
 
-
-    const user = await userServices.createUser({ email, name, password, phone })
+    const user = await userServices.createUser({
+      email,
+      name,
+      password,
+      phone,
+    });
 
     return mutationSuccessResponse(res, user);
   } catch (err: any) {
     return errorResponse(res, err.message);
   }
-};
+}
 
-async function login(
-  req: Request,
-  res: Response
-) {
+async function login(req: Request, res: Response) {
   const { email, password } = req.body;
 
   try {
@@ -45,7 +40,7 @@ async function login(
     const userCredentials = await userServices.login(email, password);
 
     if (userCredentials.message) {
-      return badRequestResponse(res, userCredentials.message)
+      return badRequestResponse(res, userCredentials.message);
     }
 
     return mutationSuccessResponse(res, userCredentials);
@@ -54,10 +49,7 @@ async function login(
   }
 }
 
-async function getAccessToken(
-  req: Request,
-  res: Response
-) {
+async function getAccessToken(req: Request, res: Response) {
   const { refreshToken } = req.body;
 
   try {
@@ -67,7 +59,7 @@ async function getAccessToken(
 
     const accessToken = await userServices.getAccessToken(refreshToken);
     if (accessToken?.message) {
-      return notAllowedResponse(res)
+      return notAllowedResponse(res);
     }
 
     return mutationSuccessResponse(res, { ...accessToken });
@@ -76,20 +68,15 @@ async function getAccessToken(
   }
 }
 
-async function sendResetPassword(
-  req: Request,
-  res: Response
-) {
+async function sendResetPassword(req: Request, res: Response) {
   const { email } = req.body;
   try {
-
     const resetPassword = await userServices.sendResetPasswordLink(email);
     if (resetPassword.message) {
-      badRequestResponse(res, resetPassword.message)
+      badRequestResponse(res, resetPassword.message);
     }
 
-    return resetPassword
-
+    return resetPassword;
   } catch (err: any) {
     return errorResponse(res, err.message);
   }
@@ -105,35 +92,33 @@ async function resetPassword(
   const { resetToken } = req.query;
   const { newPassword } = req.body;
   try {
-    if (!newPassword || typeof (resetToken) !== "string") {
+    if (!newPassword || typeof resetToken !== "string") {
       return badRequestResponse(res, "New password field required");
     }
 
     const result = await userServices.resetPassword(newPassword, resetToken);
     if (result.message) {
-      return notAllowedResponse(res)
+      return notAllowedResponse(res);
     }
 
-    return mutationSuccessResponse(
-      res,
-      result
-    );
+    return mutationSuccessResponse(res, result);
   } catch (err: any) {
     return errorResponse(res, err.message);
   }
 }
 
-async function getAllUsers(
-  req: Request,
-  res: Response
-) {
+async function getAllUsers(req: Request, res: Response) {
   const { keyword, page, limit } = req.query;
   try {
     if (!page || !limit) {
       return badRequestResponse(res, "Page and limit params required!");
     }
 
-    const users = await userServices.getAllUsers(Number(page), Number(limit), String(keyword));
+    const users = await userServices.getAllUsers(
+      Number(page),
+      Number(limit),
+      String(keyword)
+    );
 
     return getSuccessResponse(res, users);
   } catch (err: any) {
@@ -141,10 +126,7 @@ async function getAllUsers(
   }
 }
 
-async function verifiedUserEmail(
-  req: Request,
-  res: Response
-) {
+async function verifiedUserEmail(req: Request, res: Response) {
   const { token } = req.query;
   try {
     if (typeof token !== "string") {
@@ -153,7 +135,7 @@ async function verifiedUserEmail(
 
     const verifiedUser = await userServices.verifiedEmail(token);
     if (verifiedUser?.message) {
-      badRequestResponse(res, "Cannon verified user email")
+      badRequestResponse(res, "Cannon verified user email");
     }
 
     return getSuccessResponse(res, verifiedUser);
@@ -162,4 +144,12 @@ async function verifiedUserEmail(
   }
 }
 
-export default { createUser, login, getAccessToken, sendResetPassword, resetPassword, getAllUsers, verifiedUserEmail }
+export default {
+  createUser,
+  login,
+  getAccessToken,
+  sendResetPassword,
+  resetPassword,
+  getAllUsers,
+  verifiedUserEmail,
+};
