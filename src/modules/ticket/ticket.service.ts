@@ -65,6 +65,6 @@ async function deleteOne(id: number) {
 }
 
 async function getAll() {
-  return await prisma.content.findMany();
+  return await prisma.ticket.findMany();
 }
 export default { create, update, deleteOne, getAll };
