@@ -10,7 +10,7 @@ interface CartType {
   phone?: string;
   date: Date;
   quantity: number;
-  status: CartStatus;
+  status?: CartStatus;
   ticketId: number;
   userId: number;
 }
@@ -22,7 +22,6 @@ async function create({
   phone,
   date,
   quantity,
-  status,
   ticketId,
   userId,
 }: CartType) {
@@ -32,21 +31,24 @@ async function create({
     return { message: "cannot find user or ticket" };
   }
 
-  const cart = await prisma.cart.create({
-    data: {
-      name,
-      identity,
-      email,
-      phone,
-      date,
-      quantity,
-      status,
-      ticketId,
-      userId,
-    },
-  });
-
-  return { ...cart };
+  try {
+    const cart = await prisma.cart.create({
+      data: {
+        name,
+        identity,
+        email,
+        phone,
+        date: new Date(date),
+        quantity,
+        ticketId,
+        userId,
+      },
+    });
+    return { ...cart };
+  } catch (err: any) {
+    console.log(err);
+    return { message: err.message };
+  }
 }
 
 async function update({
@@ -108,7 +110,7 @@ async function validateUserAndTicket(userId: number, ticketId: number) {
     },
   });
 
-  if (!validateUser || validateTicket) {
+  if (!validateUser || !validateTicket) {
     return false;
   }
 

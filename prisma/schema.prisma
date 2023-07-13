@@ -48,7 +48,7 @@ model Cart {
   phone    String?
   date     DateTime
   quantity Int
-  status   CartStatus
+  status   CartStatus @default(PENDING)
   Ticket   Ticket?    @relation(fields: [ticketId], references: [id])
   ticketId Int?
   User     User?      @relation(fields: [userId], references: [id])

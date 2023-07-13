@@ -7,20 +7,11 @@ import {
 import cartService from "./cart.service";
 
 async function create(req: Request, res: Response) {
-  const {
-    name,
-    date,
-    email,
-    quantity,
-    status,
-    ticketId,
-    userId,
-    identity,
-    phone,
-  } = req.body;
+  const { name, date, email, quantity, ticketId, userId, identity, phone } =
+    req.body;
 
   try {
-    if (!name || !email || !quantity || !status || !ticketId || !userId) {
+    if (!name || !email || !quantity || !ticketId) {
       return badRequestResponse(res, "Required field undefine!");
     }
 
@@ -29,9 +20,8 @@ async function create(req: Request, res: Response) {
       date,
       email,
       quantity,
-      status,
       ticketId,
-      userId,
+      userId: 1,
       identity,
       phone,
     });
