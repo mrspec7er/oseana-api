@@ -64,7 +64,38 @@ async function deleteOne(id: number) {
   });
 }
 
-async function getAll() {
-  return await prisma.ticket.findMany();
+async function getAll(keyword: string) {
+  return await prisma.ticket.findMany({
+    where: {
+      OR: [
+        {
+          destination: {
+            contains: keyword,
+            mode: "insensitive",
+          },
+        },
+        {
+          name: {
+            contains: keyword,
+            mode: "insensitive",
+          },
+        },
+        {
+          description: {
+            contains: keyword,
+            mode: "insensitive",
+          },
+        },
+      ],
+    },
+  });
 }
-export default { create, update, deleteOne, getAll };
+
+async function getOne(id: number) {
+  return await prisma.ticket.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+export default { create, update, deleteOne, getAll, getOne };

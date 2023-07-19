@@ -71,9 +71,15 @@ async function deleteOne(req: Request, res: Response) {
   }
 }
 
-async function getAll(req: Request, res: Response) {
+async function getOne(req: Request, res: Response) {
+  const { id } = req.params;
+
   try {
-    const ticket = await ticketService.getAll();
+    if (!id) {
+      return badRequestResponse(res, "Required field undefine!");
+    }
+
+    const ticket = await ticketService.getOne(Number(id));
 
     return mutationSuccessResponse(res, ticket);
   } catch (err: any) {
@@ -81,4 +87,18 @@ async function getAll(req: Request, res: Response) {
   }
 }
 
-export default { create, deleteOne, update, getAll };
+async function getAll(req: Request, res: Response) {
+  const { keyword } = req.query;
+  try {
+    if (typeof keyword !== "string") {
+      return badRequestResponse(res, "Ticket not found!");
+    }
+    const ticket = await ticketService.getAll(keyword);
+
+    return mutationSuccessResponse(res, ticket);
+  } catch (err: any) {
+    return errorResponse(res, err.message);
+  }
+}
+
+export default { create, deleteOne, update, getAll, getOne };

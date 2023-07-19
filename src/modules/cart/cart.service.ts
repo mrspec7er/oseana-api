@@ -34,6 +34,7 @@ async function create({
   try {
     const cart = await prisma.cart.create({
       data: {
+        bookingId: "OSN-" + Math.floor(Math.random() * 100000000),
         name,
         identity,
         email,
@@ -42,6 +43,7 @@ async function create({
         quantity,
         ticketId,
         userId,
+        status: "PENDING",
       },
     });
     return { ...cart };

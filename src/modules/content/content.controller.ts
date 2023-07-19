@@ -28,8 +28,6 @@ async function modifyGalleryPages(req: Request, res: Response) {
   const images = req.files;
 
   try {
-    console.log(title, images);
-
     if (!title || !images) {
       return badRequestResponse(res, "Title and images undefine!");
     }
