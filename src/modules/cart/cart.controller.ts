@@ -3,8 +3,10 @@ import {
   badRequestResponse,
   errorResponse,
   mutationSuccessResponse,
+  getSuccessResponse,
 } from "../../utility/apiResponse";
 import cartService from "./cart.service";
+import { CartStatus } from "@prisma/client";
 
 async function create(req: Request, res: Response) {
   const { name, date, email, quantity, ticketId, userId, identity, phone } =
@@ -82,6 +84,24 @@ async function update(req: Request, res: Response) {
   }
 }
 
+async function updateStatus(req: Request, res: Response) {
+  const { id, status } = req.body;
+
+  try {
+    if (status in CartStatus) {
+      const cart = await cartService.updateStatus({
+        id,
+        status,
+      });
+
+      return mutationSuccessResponse(res, cart);
+    }
+    return badRequestResponse(res, "Required field undefine!");
+  } catch (err: any) {
+    return errorResponse(res, err.message);
+  }
+}
+
 async function deleteOne(req: Request, res: Response) {
   const { id } = req.params;
 
@@ -102,7 +122,7 @@ async function getAll(req: Request, res: Response) {
   try {
     const ticket = await cartService.getAll();
 
-    return mutationSuccessResponse(res, ticket);
+    return getSuccessResponse(res, ticket);
   } catch (err: any) {
     return errorResponse(res, err.message);
   }
@@ -119,4 +139,4 @@ async function getOne(req: Request, res: Response) {
   }
 }
 
-export default { create, deleteOne, update, getAll, getOne };
+export default { create, deleteOne, update, getAll, getOne, updateStatus };

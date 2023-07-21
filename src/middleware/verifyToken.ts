@@ -46,6 +46,6 @@ export async function verifyUserAdmin(
 
     next();
   } catch (err) {
-    return badRequestResponse(res, "Cannot verify user");
+    return loginRedirectResponse(res);
   }
 }

@@ -79,6 +79,23 @@ async function update({
   });
 }
 
+async function updateStatus({
+  id,
+  status,
+}: {
+  id: number;
+  status: CartStatus;
+}) {
+  return await prisma.cart.update({
+    data: {
+      status,
+    },
+    where: {
+      id,
+    },
+  });
+}
+
 async function deleteOne(id: number) {
   return await prisma.cart.delete({
     where: {
@@ -88,7 +105,14 @@ async function deleteOne(id: number) {
 }
 
 async function getAll() {
-  return await prisma.cart.findMany();
+  return await prisma.cart.findMany({
+    include: {
+      Ticket: true,
+    },
+    orderBy: {
+      date: "desc",
+    },
+  });
 }
 
 async function getOne(id: number) {
@@ -119,4 +143,4 @@ async function validateUserAndTicket(userId: number, ticketId: number) {
   return true;
 }
 
-export default { create, update, deleteOne, getAll, getOne };
+export default { create, update, updateStatus, deleteOne, getAll, getOne };
