@@ -115,10 +115,14 @@ async function getAll() {
   });
 }
 
-async function getOne(id: number) {
-  return await prisma.cart.findUnique({
+async function getOne(bookingId: string, userCredentials: string) {
+  return await prisma.cart.findFirst({
     where: {
-      id,
+      bookingId,
+      phone: userCredentials,
+    },
+    include: {
+      Ticket: true,
     },
   });
 }

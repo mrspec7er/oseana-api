@@ -129,9 +129,9 @@ async function getAll(req: Request, res: Response) {
 }
 
 async function getOne(req: Request, res: Response) {
-  const { id } = req.params;
+  const { bookingId, userCredential } = req.params;
   try {
-    const ticket = await cartService.getOne(Number(id));
+    const ticket = await cartService.getOne(bookingId, userCredential);
 
     return mutationSuccessResponse(res, ticket);
   } catch (err: any) {
