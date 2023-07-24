@@ -104,15 +104,56 @@ async function deleteOne(id: number) {
   });
 }
 
-async function getAll() {
-  return await prisma.cart.findMany({
+async function getAll(
+  status: CartStatus | null,
+  keyword: string,
+  limit: number,
+  pageNumber: number
+) {
+  const query: { OR: any[]; status?: CartStatus } = {
+    OR: [
+      {
+        name: {
+          contains: keyword,
+          mode: "insensitive",
+        },
+      },
+      {
+        bookingId: {
+          contains: keyword,
+          mode: "insensitive",
+        },
+      },
+      {
+        email: {
+          contains: keyword,
+          mode: "insensitive",
+        },
+      },
+    ],
+  };
+
+  if (status) {
+    query.status = status;
+  }
+
+  const data = await prisma.cart.findMany({
+    where: query,
     include: {
       Ticket: true,
     },
     orderBy: {
       date: "desc",
     },
+    skip: (pageNumber - 1) * limit,
+    take: limit,
   });
+
+  const totalData = await prisma.cart.count({
+    where: query,
+  });
+
+  return { data, totalData };
 }
 
 async function getOne(bookingId: string, userCredentials: string) {

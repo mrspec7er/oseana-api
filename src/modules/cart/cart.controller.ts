@@ -110,19 +110,35 @@ async function deleteOne(req: Request, res: Response) {
       return badRequestResponse(res, "Required field undefine!");
     }
 
-    const ticket = await cartService.deleteOne(Number(id));
+    const cart = await cartService.deleteOne(Number(id));
 
-    return mutationSuccessResponse(res, ticket);
+    return mutationSuccessResponse(res, cart);
   } catch (err: any) {
     return errorResponse(res, err.message);
   }
 }
 
 async function getAll(req: Request, res: Response) {
+  const { limit, pageNumber, keyword, status } = req.query;
   try {
-    const ticket = await cartService.getAll();
+    if (
+      !limit ||
+      !pageNumber ||
+      typeof keyword !== "string" ||
+      typeof status !== "string"
+    ) {
+      return badRequestResponse(res, "Required field undefine!");
+    }
 
-    return getSuccessResponse(res, ticket);
+    if (status === "" || status in CartStatus) {
+      const cart = await cartService.getAll(
+        status as CartStatus,
+        keyword,
+        Number(limit),
+        Number(pageNumber)
+      );
+      return getSuccessResponse(res, cart.data, { totalData: cart.totalData });
+    }
   } catch (err: any) {
     return errorResponse(res, err.message);
   }
@@ -131,9 +147,9 @@ async function getAll(req: Request, res: Response) {
 async function getOne(req: Request, res: Response) {
   const { bookingId, userCredential } = req.params;
   try {
-    const ticket = await cartService.getOne(bookingId, userCredential);
+    const cart = await cartService.getOne(bookingId, userCredential);
 
-    return mutationSuccessResponse(res, ticket);
+    return mutationSuccessResponse(res, cart);
   } catch (err: any) {
     return errorResponse(res, err.message);
   }
