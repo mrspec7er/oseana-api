@@ -144,6 +144,16 @@ async function getAll(req: Request, res: Response) {
   }
 }
 
+async function getStatistic(req: Request, res: Response) {
+  try {
+    const statistic = await cartService.getStatistic();
+
+    return mutationSuccessResponse(res, statistic);
+  } catch (err: any) {
+    return errorResponse(res, err.message);
+  }
+}
+
 async function getOne(req: Request, res: Response) {
   const { bookingId, userCredential } = req.params;
   try {
@@ -155,4 +165,12 @@ async function getOne(req: Request, res: Response) {
   }
 }
 
-export default { create, deleteOne, update, getAll, getOne, updateStatus };
+export default {
+  create,
+  deleteOne,
+  update,
+  getAll,
+  getStatistic,
+  getOne,
+  updateStatus,
+};

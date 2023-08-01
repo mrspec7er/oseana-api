@@ -54,6 +54,8 @@ model Cart {
   ticketId  Int?
   User      User?      @relation(fields: [userId], references: [id])
   userId    Int?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 enum ContentType {

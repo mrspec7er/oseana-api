@@ -143,7 +143,7 @@ async function getAll(
       Ticket: true,
     },
     orderBy: {
-      date: "desc",
+      createdAt: "desc",
     },
     skip: (pageNumber - 1) * limit,
     take: limit,
@@ -154,6 +154,22 @@ async function getAll(
   });
 
   return { data, totalData };
+}
+
+async function getStatistic() {
+  const totalOrder = await prisma.cart.count();
+  const pendingOrder = await prisma.cart.count({
+    where: {
+      status: "PENDING",
+    },
+  });
+  const completedOrder = await prisma.cart.count({
+    where: {
+      status: "DONE",
+    },
+  });
+
+  return { totalOrder, pendingOrder, completedOrder };
 }
 
 async function getOne(bookingId: string, userCredentials: string) {
@@ -188,4 +204,12 @@ async function validateUserAndTicket(userId: number, ticketId: number) {
   return true;
 }
 
-export default { create, update, updateStatus, deleteOne, getAll, getOne };
+export default {
+  create,
+  update,
+  updateStatus,
+  deleteOne,
+  getAll,
+  getStatistic,
+  getOne,
+};

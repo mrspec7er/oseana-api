@@ -8,6 +8,7 @@ router.post("/carts", cartController.create);
 router.put("/carts", verifyUserAdmin, cartController.update);
 router.put("/carts/status", verifyUserAdmin, cartController.updateStatus);
 router.get("/carts", verifyUserAdmin, cartController.getAll);
+router.get("/carts/statistic", verifyUserAdmin, cartController.getStatistic);
 router.delete("/carts/:id", verifyUserAdmin, cartController.deleteOne);
 router.get("/carts/:bookingId/:userCredential", cartController.getOne);
 
