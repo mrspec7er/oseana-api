@@ -10,7 +10,7 @@ function routes(app: Express) {
   app.use("/api/v1", content);
   app.use("/api/v1", ticket);
   app.use("/api/v1", cart);
-  app.use("/", (req, res) => {
+  app.use("/ping", (req, res) => {
     res.status(200).json({
       message: "Hello there!",
     });

@@ -1,8 +1,12 @@
 import { PrismaClient, CartStatus } from "@prisma/client";
+import {
+  bookingStatusEmailTemplate,
+  sendEmail,
+} from "../../utility/emailService";
 
 const prisma = new PrismaClient();
 
-interface CartType {
+export interface CartType {
   id?: number;
   identity?: string;
   name?: string;
@@ -11,6 +15,7 @@ interface CartType {
   date: Date;
   quantity: number;
   status?: CartStatus;
+  bookingId?: string;
   ticketId: number;
   userId: number;
 }
@@ -86,7 +91,7 @@ async function updateStatus({
   id: number;
   status: CartStatus;
 }) {
-  return await prisma.cart.update({
+  const updatedCart = await prisma.cart.update({
     data: {
       status,
     },
@@ -94,6 +99,19 @@ async function updateStatus({
       id,
     },
   });
+
+  if (updatedCart) {
+    await sendEmail({
+      from: "info@oseanasnorkelingadventure.com",
+      subject: "Booking Informations",
+      to: "wijayakusumasandi@gmail.com",
+      html: bookingStatusEmailTemplate(updatedCart),
+    });
+
+    return updatedCart;
+  }
+
+  return { message: "Failed to update booking status" };
 }
 
 async function deleteOne(id: number) {
