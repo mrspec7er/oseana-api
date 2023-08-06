@@ -9,7 +9,7 @@
     "dev": "nodemon -r --legacy-watch ./src/index.ts"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node src/utility/seed.ts"
   },
   "keywords": [],
   "author": "",
