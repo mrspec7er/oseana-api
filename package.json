@@ -8,6 +8,9 @@
     "build": "tsc -p .",
     "dev": "nodemon -r --legacy-watch ./src/index.ts"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

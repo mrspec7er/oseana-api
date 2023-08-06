@@ -37,7 +37,7 @@ export async function verifyUserAdmin(
       },
     });
 
-    if (!user || user.role !== Role.USER) {
+    if (!user || user.role !== Role.ADMIN) {
       return unauthorizeResponse(res);
     }
 
